@@ -4,6 +4,8 @@ import com.readify.spring_boot_library.dao.BookRepository;
 import com.readify.spring_boot_library.entity.Book;
 import com.readify.spring_boot_library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("http://localhost:3000")
@@ -19,22 +21,24 @@ public class BookController {
     }
 
     @GetMapping("/secure/currentloans/count")
-    public int currentLoansCount() {
-        String userEmail = "testuser@email.com";
+    public int currentLoansCount(@AuthenticationPrincipal Jwt jwt) {
+        String userEmail = jwt.getClaim("email");
 
         return bookService.currentLoansCount(userEmail);
     }
 
     @GetMapping("/secure/ischeckedout/byuser")
-    public Boolean checkoutBookByUser(@RequestParam Long bookId) {
-        String userEmail = "testuser@email.com";
+    public Boolean checkoutBookByUser(@AuthenticationPrincipal Jwt jwt,
+                                      @RequestParam Long bookId) {
+        String userEmail = jwt.getClaim("email");
 
         return bookService.checkoutBookByUser(userEmail, bookId);
     }
 
     @PutMapping("/secure/checkout")
-    public Book checkoutBook(@RequestParam Long bookId) throws Exception {
-        String userEmail = "testuser@email.com";
+    public Book checkoutBook(@AuthenticationPrincipal Jwt jwt,
+                             @RequestParam Long bookId) throws Exception {
+        String userEmail = jwt.getClaim("email");
 
         return bookService.checkoutBook(userEmail, bookId);
     }

@@ -9,7 +9,7 @@ import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import { BookCheckoutPage } from './layouts/BookCheckoutPage/BookCheckoutPage';
 import { auth0Config } from './lib/auth0Config';
 import LoginPage from './Auth/LoginPage';
-import { Auth0Provider, withAuthenticationRequired} from '@auth0/auth0-react';
+import { Auth0Provider, withAuthenticationRequired } from '@auth0/auth0-react';
 
 const Auth0ProviderWithHistory = ({ children }: { children: React.ReactNode }) => {
   const history = useHistory();
@@ -20,14 +20,12 @@ const Auth0ProviderWithHistory = ({ children }: { children: React.ReactNode }) =
 
   return (
     <Auth0Provider
-      domain={auth0Config.issuer}
+      domain={auth0Config.domain}
       clientId={auth0Config.clientId}
-      authorizationParams={{
-        redirect_uri: auth0Config.redirectUri,
-        audience: auth0Config.audience,
-        scope: auth0Config.scope,
-      }} 
-       onRedirectCallback={onRedirectCallback}
+      authorizationParams={
+        auth0Config.authorizationParams
+      }
+      onRedirectCallback={onRedirectCallback}
     >
       {children}
     </Auth0Provider>
@@ -42,25 +40,25 @@ export const App = () => {
   return (
     <div className='d-flex flex-column min-vh-100'>
       <Auth0ProviderWithHistory>
-      <Navbar />
-      <div className='flex-grow-1'>
-        <Switch>
-          <Route path='/' exact>
-            <Redirect to='/home' />
-          </Route>
-          <Route path='/home'>
-            <HomePage />
-          </Route>
-          <Route path='/search'>
-            <SearchBooksPage />
-          </Route>
-          <Route path='/checkout/:bookId'>
-            <BookCheckoutPage />
-          </Route>
-          <Route path='/login' render={() => <LoginPage />} />
-        </Switch>
-      </div>
-      <Footer />
+        <Navbar />
+        <div className='flex-grow-1'>
+          <Switch>
+            <Route path='/' exact>
+              <Redirect to='/home' />
+            </Route>
+            <Route path='/home'>
+              <HomePage />
+            </Route>
+            <Route path='/search'>
+              <SearchBooksPage />
+            </Route>
+            <Route path='/checkout/:bookId'>
+              <BookCheckoutPage />
+            </Route>
+            <Route path='/login' render={() => <LoginPage />} />
+          </Switch>
+        </div>
+        <Footer />
       </Auth0ProviderWithHistory>
     </div>
   );
